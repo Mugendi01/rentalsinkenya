@@ -1,0 +1,255 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                      String           @id @default(cuid())
+  name                    String
+  email                   String           @unique
+  phone                   String?
+  country                 String?
+  preferredContact        String           @default("WHATSAPP") // WHATSAPP, PHONE, EMAIL
+  passwordHash            String
+  role                    String           @default("USER") // USER, ADMIN
+  isEmailVerified         Boolean          @default(false)
+  status                  String           @default("UNVERIFIED") // UNVERIFIED, VERIFIED, DISABLED
+  
+  // Verification Code (Hashed 6-digit code with expiry and attempts)
+  verificationCodeHash    String?
+  verificationCodeExpires DateTime?
+  verificationAttempts    Int              @default(0)
+
+  // Password Reset Token (Hashed token with expiry)
+  resetTokenHash          String?
+  resetTokenExpires       DateTime?
+
+  // Brute force protection
+  failedLoginAttempts     Int              @default(0)
+  lockUntil               DateTime?
+
+  lastLoginAt             DateTime?
+  createdAt               DateTime         @default(now())
+  updatedAt               DateTime         @updatedAt
+
+  // Relations
+  enquiries               Enquiry[]
+  viewingRequests         ViewingRequest[]
+  savedListings           SavedListing[]
+  auditLogs               AuditLog[]
+
+  @@index([email])
+  @@index([status])
+  @@index([role])
+}
+
+model Property {
+  id               String            @id @default(cuid())
+  title            String
+  slug             String            @unique
+  description      String
+  propertyType     String            // Apartment, Studio, Villa, Penthouse, Townhouse, Maisonette
+  bedrooms         Int               @default(1)
+  bathrooms        Float             @default(1)
+  sizeSqft         Int?
+  furnishing       String            @default("Furnished") // Furnished, Unfurnished, Semi-Furnished
+  
+  // Location
+  county           String            @default("Nairobi")
+  town             String            @default("Nairobi")
+  neighbourhood    String            // e.g. Kilimani, Westlands, Kileleshwa, Ruaka, Diani
+  address          String?
+  mapCoordinates   String?
+  
+  // Pricing
+  price            Float             // Total asking price in KES
+  currency         String            @default("KES")
+
+  // Ready-to-Run Airbnb Takeover Specifics ("WHAT AM I BUYING?")
+  assetValue       Float?            // Value of physical assets (furniture, appliances, etc.)
+  landlordDeposit  Float?            // Deposit held by landlord / required to transfer
+  goodwill         Float?            @default(0) // Goodwill/transfer premium
+  monthlyRent      Float?            // Tenancy monthly rent in KES
+  leaseTerms       String?           // Tenancy & lease transfer terms / landlord conditions
+  inventoryList    String?           // Complete inventory list (JSON string or itemized list)
+  operationalAssets String?          // Operations included (SOPs, cleaners, vendor list, Airbnb-ready unit)
+  notIncluded      String?           // What is strictly NOT included (freehold building, personal items, platform account)
+  
+  // Status & Badges
+  isAirbnbReady    Boolean           @default(true)
+  isFeatured       Boolean           @default(false)
+  status           String            @default("AVAILABLE") // AVAILABLE, SOLD, RESERVED, COMING_SOON, HIDDEN
+  
+  // Airbnb & Rental Investment Forecasts
+  estNightlyRate   Float?
+  estMonthlyIncome Float?
+  estAnnualIncome  Float?
+  estOccupancyRate Float?            // percentage, e.g. 70 for 70%
+  estRoiPercentage Float?            // percentage, e.g. 14.5 for 14.5%
+  serviceCharge    Float?            // monthly service charge in KES
+  managementFee    Float?            // percentage or fixed fee
+  investmentNotes  String?
+  
+  // Media & SEO
+  featuredImage    String?
+  seoTitle         String?
+  seoDescription   String?
+  viewsCount       Int               @default(0)
+  
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  
+  // Relations
+  images           PropertyImage[]
+  amenities        PropertyAmenity[]
+  enquiries        Enquiry[]
+  viewingRequests  ViewingRequest[]
+  savedBy          SavedListing[]
+
+  @@index([status])
+  @@index([neighbourhood])
+  @@index([propertyType])
+  @@index([isAirbnbReady])
+  @@index([isFeatured])
+}
+
+model PropertyImage {
+  id           String   @id @default(cuid())
+  propertyId   String
+  imageUrl     String
+  isPrimary    Boolean  @default(false)
+  displayOrder Int      @default(0)
+  caption      String?
+  createdAt    DateTime @default(now())
+
+  property     Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+}
+
+model Amenity {
+  id         String            @id @default(cuid())
+  name       String            @unique
+  icon       String            // Lucide icon name, e.g. Wifi, Car, Shield, Waves, Dumbbell, Zap
+  category   String            @default("General")
+  
+  properties PropertyAmenity[]
+}
+
+model PropertyAmenity {
+  id         String   @id @default(cuid())
+  propertyId String
+  amenityId  String
+
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  amenity    Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, amenityId])
+  @@index([propertyId])
+  @@index([amenityId])
+}
+
+model Location {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  slug         String   @unique
+  county       String
+  description  String?
+  imageUrl     String?
+  isFeatured   Boolean  @default(false)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([slug])
+}
+
+model SavedListing {
+  id         String   @id @default(cuid())
+  userId     String
+  propertyId String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@index([userId])
+  @@index([propertyId])
+}
+
+model Enquiry {
+  id                  String    @id @default(cuid())
+  userId              String?
+  propertyId          String?
+  fullName            String
+  phone               String
+  email               String
+  preferredContact    String    @default("WHATSAPP") // WHATSAPP, PHONE, EMAIL
+  investmentPurpose   String    @default("AIRBNB")   // AIRBNB, LONG_TERM_RENTAL, PERSONAL_USE, OTHER
+  budget              String?
+  preferredViewingDate String?
+  message             String
+  additionalQuestions String?
+  status              String    @default("NEW")       // NEW, CONTACTED, VIEWING_REQUESTED, VIEWING_SCHEDULED, NEGOTIATION, CONVERTED, CLOSED
+  internalNotes       String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user                User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  property            Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([propertyId])
+  @@index([userId])
+}
+
+model ViewingRequest {
+  id            String   @id @default(cuid())
+  userId        String?
+  propertyId    String
+  fullName      String
+  phone         String
+  email         String
+  preferredDate String   // YYYY-MM-DD
+  preferredTime String   // e.g. Morning (10:00 AM), Afternoon (2:00 PM)
+  message       String?
+  status        String   @default("PENDING") // PENDING, CONFIRMED, RESCHEDULED, COMPLETED, CANCELLED
+  internalNotes String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  property      Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([propertyId])
+  @@index([userId])
+}
+
+model SiteSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String   // e.g. PROPERTY_CREATED, LEAD_STATUS_CHANGED, USER_DISABLED, USER_LOGIN
+  entityType String   // e.g. Property, Enquiry, User, Setting
+  entityId   String?
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
