@@ -1,6 +1,13 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { getSiteSettings } from '@/lib/settings';
+
+type PropertyWithImages = Prisma.PropertyGetPayload<{
+  include: {
+    images: true;
+  };
+}>;
 import PropertyCard from '@/components/properties/PropertyCard';
 import PropertyFilters from '@/components/properties/PropertyFilters';
 import { Building2, SearchX, SlidersHorizontal } from 'lucide-react';
@@ -85,20 +92,27 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
     orderBy = { estRoiPercentage: 'desc' };
   }
 
-  const properties = await prisma.property.findMany({
-    where,
-    orderBy,
-    include: {
-      images: {
-        orderBy: { displayOrder: 'asc' },
-        take: 1,
-      },
-    },
-  });
+  let properties: PropertyWithImages[] = [];
+  let locationsList: { name: string; slug: string }[] = [];
 
-  const locationsList = await prisma.location.findMany({
-    select: { name: true, slug: true },
-  });
+  try {
+    properties = await prisma.property.findMany({
+      where,
+      orderBy,
+      include: {
+        images: {
+          orderBy: { displayOrder: 'asc' },
+          take: 1,
+        },
+      },
+    });
+
+    locationsList = await prisma.location.findMany({
+      select: { name: true, slug: true },
+    });
+  } catch (error) {
+    console.warn('Error fetching properties directory from database:', error);
+  }
 
   return (
     <div className="bg-slate-50 min-h-screen py-8 sm:py-12">

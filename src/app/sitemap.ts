@@ -1,8 +1,10 @@
 import { MetadataRoute } from 'next';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://rentals.ke';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://rentalsinkenya.co.ke';
 
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -19,18 +21,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ];
 
-  // Dynamic Property routes
-  const properties = await prisma.property.findMany({
-    where: { status: { not: 'HIDDEN' } },
-    select: { slug: true, updatedAt: true },
-  });
+  let propertyRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const properties = await prisma.property.findMany({
+      where: { status: { not: 'HIDDEN' } },
+      select: { slug: true, updatedAt: true },
+    });
 
-  const propertyRoutes: MetadataRoute.Sitemap = properties.map((prop) => ({
-    url: `${baseUrl}/properties/${prop.slug}`,
-    lastModified: prop.updatedAt,
-    changeFrequency: 'weekly',
-    priority: 0.85,
-  }));
+    propertyRoutes = properties.map((prop) => ({
+      url: `${baseUrl}/properties/${prop.slug}`,
+      lastModified: prop.updatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.85,
+    }));
+  } catch (error) {
+    console.warn('Could not fetch dynamic property routes for sitemap, using static routes only:', error);
+  }
 
   return [...staticRoutes, ...propertyRoutes];
 }

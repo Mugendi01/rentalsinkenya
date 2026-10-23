@@ -4,6 +4,8 @@ import { getCurrentUser, hashPassword, generateVerificationCode } from '@/lib/au
 import { userProfileSchema } from '@/lib/validations';
 import { sendVerificationEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const session = await getCurrentUser();
   if (!session) {

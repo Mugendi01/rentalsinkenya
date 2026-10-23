@@ -3,6 +3,8 @@ import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 import { getSiteSettings } from '@/lib/settings';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const settings = await getSiteSettings();
   return NextResponse.json({ settings });

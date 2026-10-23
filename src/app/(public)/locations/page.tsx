@@ -3,29 +3,38 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
+import type { Location } from '@prisma/client';
 import { Compass, ArrowRight, MapPin } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
-  title: 'Strategic Kenyan Property Investment Locations | Rentals.ke',
+  title: 'Strategic Kenyan Property Investment Locations | Rentals Kenya',
   description:
     'Explore high-performing real estate and Airbnb investment locations across Kenya: Kilimani, Westlands, Kileleshwa, Diani Beach, Ruaka, and Naivasha.',
 };
 
 export default async function LocationsPage() {
-  const locations = await prisma.location.findMany({
-    orderBy: { displayOrder: 'asc' },
-  });
-
-  // Count properties per location
+  let locations: Location[] = [];
   const locationCounts: Record<string, number> = {};
-  for (const loc of locations) {
-    const count = await prisma.property.count({
-      where: {
-        neighbourhood: { contains: loc.name },
-        status: { not: 'HIDDEN' },
-      },
+
+  try {
+    locations = await prisma.location.findMany({
+      orderBy: { displayOrder: 'asc' },
     });
-    locationCounts[loc.name] = count;
+
+    // Count properties per location
+    for (const loc of locations) {
+      const count = await prisma.property.count({
+        where: {
+          neighbourhood: { contains: loc.name },
+          status: { not: 'HIDDEN' },
+        },
+      });
+      locationCounts[loc.name] = count;
+    }
+  } catch (error) {
+    console.warn('Error fetching locations:', error);
   }
 
   return (

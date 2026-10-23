@@ -2,7 +2,25 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import prisma from '@/lib/prisma';
+import type { Prisma, Location } from '@prisma/client';
 import { getSiteSettings } from '@/lib/settings';
+
+type FeaturedProperty = Prisma.PropertyGetPayload<{
+  include: {
+    images: true;
+  };
+}>;
+
+type RentalProperty = Prisma.PropertyGetPayload<{
+  include: {
+    images: true;
+    amenities: {
+      include: {
+        amenity: true;
+      };
+    };
+  };
+}>;
 import { formatKES, buildWhatsAppUrl } from '@/lib/formatters';
 import HeroSearch from '@/components/home/HeroSearch';
 import HousesForRentSection from '@/components/home/HousesForRentSection';
@@ -26,64 +44,72 @@ import {
   HelpCircle,
 } from 'lucide-react';
 
-export const revalidate = 60; // Revalidate page every minute
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const settings = await getSiteSettings();
 
-  // Fetch Featured Properties (Available or Featured - Secondary Offering: Airbnb Takeovers)
-  const featuredProperties = await prisma.property.findMany({
-    where: {
-      status: { not: 'HIDDEN' },
-      isFeatured: true,
-    },
-    take: 6,
-    orderBy: { createdAt: 'desc' },
-    include: {
-      images: {
-        orderBy: { displayOrder: 'asc' },
-        take: 1,
-      },
-    },
-  });
+  let featuredProperties: FeaturedProperty[] = [];
+  let rentalProperties: RentalProperty[] = [];
+  let locations: Location[] = [];
+  const locationCounts: Record<string, number> = {};
 
-  // Fetch Rental Properties (Apartments & Houses for Rent - Primary Business)
-  const rentalProperties = await prisma.property.findMany({
-    where: {
-      status: { not: 'HIDDEN' },
-    },
-    orderBy: [
-      { isAirbnbReady: 'asc' },
-      { createdAt: 'desc' },
-    ],
-    include: {
-      images: {
-        orderBy: { displayOrder: 'asc' },
+  try {
+    // Fetch Featured Properties (Available or Featured - Secondary Offering: Airbnb Takeovers)
+    featuredProperties = await prisma.property.findMany({
+      where: {
+        status: { not: 'HIDDEN' },
+        isFeatured: true,
       },
-      amenities: {
-        include: {
-          amenity: true,
+      take: 6,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        images: {
+          orderBy: { displayOrder: 'asc' },
+          take: 1,
         },
       },
-    },
-  });
+    });
 
-  // Fetch Locations with property counts
-  const locations = await prisma.location.findMany({
-    orderBy: { displayOrder: 'asc' },
-    take: 6,
-  });
-
-  // Count properties per location dynamically
-  const locationCounts: Record<string, number> = {};
-  for (const loc of locations) {
-    const count = await prisma.property.count({
+    // Fetch Rental Properties (Apartments & Houses for Rent - Primary Business)
+    rentalProperties = await prisma.property.findMany({
       where: {
-        neighbourhood: { contains: loc.name },
         status: { not: 'HIDDEN' },
       },
+      orderBy: [
+        { isAirbnbReady: 'asc' },
+        { createdAt: 'desc' },
+      ],
+      include: {
+        images: {
+          orderBy: { displayOrder: 'asc' },
+        },
+        amenities: {
+          include: {
+            amenity: true,
+          },
+        },
+      },
     });
-    locationCounts[loc.name] = count;
+
+    // Fetch Locations with property counts
+    locations = await prisma.location.findMany({
+      orderBy: { displayOrder: 'asc' },
+      take: 6,
+    });
+
+    // Count properties per location dynamically
+    for (const loc of locations) {
+      const count = await prisma.property.count({
+        where: {
+          neighbourhood: { contains: loc.name },
+          status: { not: 'HIDDEN' },
+        },
+      });
+      locationCounts[loc.name] = count;
+    }
+  } catch (error) {
+    console.warn('Could not fetch homepage listings from database:', error);
   }
 
   const advisorWhatsAppUrl = buildWhatsAppUrl(

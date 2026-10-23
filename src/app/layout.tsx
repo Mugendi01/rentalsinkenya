@@ -21,11 +21,11 @@ export const metadata: Metadata = {
     'Rentals Kenya',
   ],
   authors: [{ name: 'Rentals Kenya' }],
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://rentalsinkenya.co.ke'),
   openGraph: {
     type: 'website',
     locale: 'en_KE',
-    url: 'https://rentals.ke',
+    url: 'https://rentalsinkenya.co.ke',
     title: 'Rentals Kenya | Houses & Apartments for Rent in Kenya | Airbnb Setups',
     description:
       'Discover verified rental apartments and houses across Kenya, alongside turnkey Airbnb business takeovers and furnished setups for sale.',

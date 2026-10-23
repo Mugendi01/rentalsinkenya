@@ -3,7 +3,19 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { getSiteSettings } from '@/lib/settings';
+
+type PropertyDetail = Prisma.PropertyGetPayload<{
+  include: {
+    images: true;
+    amenities: {
+      include: {
+        amenity: true;
+      };
+    };
+  };
+}>;
 import { formatKES, buildWhatsAppUrl } from '@/lib/formatters';
 import PropertyGallery from '@/components/properties/PropertyGallery';
 import EnquiryForm from '@/components/forms/EnquiryForm';
@@ -50,32 +62,38 @@ interface PropertyDetailPageProps {
   };
 }
 
+export const dynamic = 'force-dynamic';
+
 // Dynamic SEO metadata
 export async function generateMetadata({
   params,
 }: PropertyDetailPageProps): Promise<Metadata> {
-  const property = await prisma.property.findUnique({
-    where: { slug: params.slug },
-  });
+  try {
+    const property = await prisma.property.findUnique({
+      where: { slug: params.slug },
+    });
 
-  if (!property) {
-    return { title: 'Property Not Found | Rentals Kenya' };
-  }
+    if (!property) {
+      return { title: 'Property Not Found | Rentals Kenya' };
+    }
 
-  const title = property.seoTitle || `${property.title} | Rentals Kenya`;
-  const description =
-    property.seoDescription ||
-    `Ready-to-run Airbnb setup in ${property.neighbourhood}, ${property.town}. Listed at ${formatKES(property.price)}. Turnkey short-term rental opportunity.`;
+    const title = property.seoTitle || `${property.title} | Rentals Kenya`;
+    const description =
+      property.seoDescription ||
+      `Ready-to-run Airbnb setup in ${property.neighbourhood}, ${property.town}. Listed at ${formatKES(property.price)}. Turnkey short-term rental opportunity.`;
 
-  return {
-    title,
-    description,
-    openGraph: {
+    return {
       title,
       description,
-      images: property.featuredImage ? [property.featuredImage] : [],
-    },
-  };
+      openGraph: {
+        title,
+        description,
+        images: property.featuredImage ? [property.featuredImage] : [],
+      },
+    };
+  } catch (error) {
+    return { title: 'Rentals Kenya | Property Details' };
+  }
 }
 
 export default async function PropertyDetailPage({
@@ -83,19 +101,24 @@ export default async function PropertyDetailPage({
 }: PropertyDetailPageProps) {
   const settings = await getSiteSettings();
 
-  const property = await prisma.property.findUnique({
-    where: { slug: params.slug },
-    include: {
-      images: {
-        orderBy: { displayOrder: 'asc' },
-      },
-      amenities: {
-        include: {
-          amenity: true,
+  let property: PropertyDetail | null = null;
+  try {
+    property = await prisma.property.findUnique({
+      where: { slug: params.slug },
+      include: {
+        images: {
+          orderBy: { displayOrder: 'asc' },
+        },
+        amenities: {
+          include: {
+            amenity: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    console.warn('Error fetching property detail:', error);
+  }
 
   if (!property || property.status === 'HIDDEN') {
     notFound();
@@ -190,7 +213,7 @@ export default async function PropertyDetailPage({
     '@type': 'RealEstateListing',
     name: property.title,
     description: property.description,
-    url: `https://rentals.ke/properties/${property.slug}`,
+    url: `https://rentalsinkenya.co.ke/properties/${property.slug}`,
     image: property.featuredImage,
     offers: {
       '@type': 'Offer',

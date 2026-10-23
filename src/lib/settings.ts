@@ -19,10 +19,10 @@ export interface SiteSettingsMap {
 
 export const DEFAULT_SETTINGS: SiteSettingsMap = {
   company_name: 'Rentals Kenya',
-  brand_name: 'Rentals.ke',
+  brand_name: 'rentalsinkenya.co.ke',
   whatsapp_number: process.env.NEXT_PUBLIC_DEFAULT_WHATSAPP || '254100382352',
   phone_number: process.env.NEXT_PUBLIC_DEFAULT_PHONE || '+254100382352',
-  email: process.env.NEXT_PUBLIC_DEFAULT_EMAIL || 'invest@rentals.ke',
+  email: process.env.NEXT_PUBLIC_DEFAULT_EMAIL || 'info@rentalsinkenya.co.ke',
   office_address: 'The Oval, 4th Floor, Ring Road Parklands, Westlands, Nairobi, Kenya',
   business_hours: 'Mon - Sat: 8:00 AM - 6:00 PM EAT',
   instagram_handle: 'rentals.kenya',
