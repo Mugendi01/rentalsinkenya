@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BrandLogo from '@/components/ui/BrandLogo';
-import { Lock, Mail, Loader2, AlertCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminLoginPage() {
@@ -11,8 +11,8 @@ export default function AdminLoginPage() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/admin';
 
-  const [email, setEmail] = useState('admin@rentals.ke');
-  const [password, setPassword] = useState('Admin@Rentals2026!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@rentals.ke"
+                  placeholder="admin@rentalsinkenya.co.ke"
                   className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white text-slate-900"
                 />
               </div>
@@ -117,19 +117,6 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Credentials Info */}
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
-            <div className="flex items-center gap-1.5 font-bold text-slate-800">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Default Admin Credentials:</span>
-            </div>
-            <div className="text-[11px] font-mono text-slate-600 pl-5">
-              Email: <strong>admin@rentals.ke</strong>
-              <br />
-              Password: <strong>Admin@Rentals2026!</strong>
-            </div>
-          </div>
 
           <div className="text-center pt-2">
             <Link
