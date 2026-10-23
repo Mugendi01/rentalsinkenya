@@ -51,32 +51,37 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check expiration
-    if (!user.verificationCodeExpires || new Date() > user.verificationCodeExpires || !user.verificationCodeHash) {
-      return NextResponse.json(
-        { error: 'Verification code has expired. Please request a new code.' },
-        { status: 400 }
-      );
-    }
+    const hasEmailProvider = Boolean(process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY);
 
-    // Verify code
-    const isMatch = await verifyPassword(code, user.verificationCodeHash);
-    if (!isMatch) {
-      const newAttempts = user.verificationAttempts + 1;
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { verificationAttempts: newAttempts },
-      });
+    // If an email provider is active, check code expiration & validity
+    if (hasEmailProvider) {
+      // Check expiration
+      if (!user.verificationCodeExpires || new Date() > user.verificationCodeExpires || !user.verificationCodeHash) {
+        return NextResponse.json(
+          { error: 'Verification code has expired. Please request a new code.' },
+          { status: 400 }
+        );
+      }
 
-      const remaining = 5 - newAttempts;
-      return NextResponse.json(
-        {
-          error: remaining > 0
-            ? `Invalid verification code. ${remaining} attempt${remaining > 1 ? 's' : ''} remaining.`
-            : 'Too many incorrect attempts. Please request a new code.',
-        },
-        { status: 400 }
-      );
+      // Verify code
+      const isMatch = await verifyPassword(code, user.verificationCodeHash);
+      if (!isMatch) {
+        const newAttempts = user.verificationAttempts + 1;
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { verificationAttempts: newAttempts },
+        });
+
+        const remaining = 5 - newAttempts;
+        return NextResponse.json(
+          {
+            error: remaining > 0
+              ? `Invalid verification code. ${remaining} attempt${remaining > 1 ? 's' : ''} remaining.`
+              : 'Too many incorrect attempts. Please request a new code.',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     // Code is valid! Mark as verified

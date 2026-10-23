@@ -322,7 +322,9 @@ ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userI
 
 -- 1. Create Default Admin User (Password: Admin@Rentals2026!)
 INSERT INTO "User" ("id", "name", "email", "phone", "country", "preferredContact", "passwordHash", "role", "isEmailVerified", "status", "updatedAt")
-VALUES ('admin_rentals_ke', 'Rentals Kenya Admin', 'admin@rentals.ke', '+254100382352', 'Kenya', 'WHATSAPP', '$2a$10$4lYr5.i6Ahxe5L0MfGB.Nef3frvHU9UKxe5169KNGRQdmhZRMP9tm', 'ADMIN', true, 'VERIFIED', NOW())
+VALUES 
+  ('admin_rentals_ke', 'Rentals Kenya Admin', 'admin@rentals.ke', '+254100382352', 'Kenya', 'WHATSAPP', '$2a$10$4lYr5.i6Ahxe5L0MfGB.Nef3frvHU9UKxe5169KNGRQdmhZRMP9tm', 'ADMIN', true, 'VERIFIED', NOW()),
+  ('admin_rentalsinkenya_co_ke', 'Rentals Kenya Admin', 'admin@rentalsinkenya.co.ke', '+254100382352', 'Kenya', 'WHATSAPP', '$2a$10$4lYr5.i6Ahxe5L0MfGB.Nef3frvHU9UKxe5169KNGRQdmhZRMP9tm', 'ADMIN', true, 'VERIFIED', NOW())
 ON CONFLICT ("email") DO UPDATE SET "role" = 'ADMIN', "status" = 'VERIFIED';
 
 -- 2. Seed Official Site Settings

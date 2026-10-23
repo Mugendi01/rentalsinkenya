@@ -91,6 +91,13 @@ function RegisterContent() {
         throw new Error(json.error || 'Registration failed');
       }
 
+      if (json.requiresVerification === false) {
+        // User is auto-verified, navigate directly
+        router.push(redirectUrl || '/dashboard');
+        router.refresh();
+        return;
+      }
+
       // Navigate to verification screen with email prefilled
       const query = new URLSearchParams({
         email: data.email,

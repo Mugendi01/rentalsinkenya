@@ -18,9 +18,18 @@ export async function POST(request: Request) {
     const validated = loginSchema.parse(body);
     const email = validated.email.toLowerCase().trim();
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { email },
     });
+
+    // Support both admin email aliases
+    if (!user) {
+      if (email === 'admin@rentalsinkenya.co.ke') {
+        user = await prisma.user.findUnique({ where: { email: 'admin@rentals.ke' } });
+      } else if (email === 'admin@rentals.ke') {
+        user = await prisma.user.findUnique({ where: { email: 'admin@rentalsinkenya.co.ke' } });
+      }
+    }
 
     // Check account lockout if user exists
     if (user && user.lockUntil && new Date() < user.lockUntil) {
@@ -67,14 +76,26 @@ export async function POST(request: Request) {
 
     // Check if email is verified
     if (!user.isEmailVerified || user.status === 'UNVERIFIED') {
-      return NextResponse.json(
-        {
-          unverified: true,
-          email: user.email,
-          message: 'Please verify your email address before continuing.',
-        },
-        { status: 403 }
-      );
+      const hasEmailProvider = Boolean(process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY);
+
+      if (!hasEmailProvider) {
+        // If no email dispatch provider is active, automatically activate user
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { isEmailVerified: true, status: 'VERIFIED' },
+        });
+        user.isEmailVerified = true;
+        user.status = 'VERIFIED';
+      } else {
+        return NextResponse.json(
+          {
+            unverified: true,
+            email: user.email,
+            message: 'Please verify your email address before continuing.',
+          },
+          { status: 403 }
+        );
+      }
     }
 
     // Reset failed attempts & record last login
