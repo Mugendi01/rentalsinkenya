@@ -316,34 +316,34 @@ export default async function PropertyDetailPage({
               <PropertyGallery images={property.images} title={property.title} />
 
               {/* Key Specs */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
-                <div className="p-2 border-r border-slate-100 last:border-0">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase">Bedrooms</span>
-                  <div className="text-lg font-black text-slate-900 mt-0.5 flex items-center justify-center gap-1.5">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase">Bedrooms</span>
+                  <div className="text-base sm:text-lg font-black text-slate-900 mt-0.5 flex items-center justify-center gap-1.5">
                     <Bed className="w-4 h-4 text-sky-600" />
                     <span>{property.bedrooms}</span>
                   </div>
                 </div>
 
-                <div className="p-2 border-r border-slate-100 last:border-0">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase">Bathrooms</span>
-                  <div className="text-lg font-black text-slate-900 mt-0.5 flex items-center justify-center gap-1.5">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase">Bathrooms</span>
+                  <div className="text-base sm:text-lg font-black text-slate-900 mt-0.5 flex items-center justify-center gap-1.5">
                     <Bath className="w-4 h-4 text-sky-600" />
                     <span>{property.bathrooms}</span>
                   </div>
                 </div>
 
-                <div className="p-2 border-r border-slate-100 last:border-0">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase">Floor Area</span>
-                  <div className="text-lg font-black text-slate-900 mt-0.5 flex items-center justify-center gap-1.5">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase">Floor Area</span>
+                  <div className="text-base sm:text-lg font-black text-slate-900 mt-0.5 flex items-center justify-center gap-1.5">
                     <Maximize className="w-4 h-4 text-sky-600" />
                     <span>{property.sizeSqft || '--'} sqft</span>
                   </div>
                 </div>
 
-                <div className="p-2">
-                  <span className="text-[11px] font-semibold text-slate-500 uppercase">Furnishing</span>
-                  <div className="text-sm font-black text-slate-900 mt-1">
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <span className="text-[10px] sm:text-[11px] font-semibold text-slate-500 uppercase">Furnishing</span>
+                  <div className="text-xs sm:text-sm font-black text-slate-900 mt-1 truncate">
                     {property.furnishing}
                   </div>
                 </div>

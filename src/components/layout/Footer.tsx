@@ -37,16 +37,16 @@ export default function Footer({ settings }: FooterProps) {
               Connect with our leasing and property specialists today for verified rental apartments, houses, and turnkey Airbnb business takeover opportunities.
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
             <Link
               href="/#rental-listings"
-              className="px-5 py-3 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-sky-500/20"
+              className="w-full sm:w-auto text-center px-5 py-3 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-sky-500/20"
             >
               Browse Rental Listings
             </Link>
             <Link
               href="/properties"
-              className="px-5 py-3 rounded-lg bg-brand-surface hover:bg-brand-royal text-white border border-brand-muted font-semibold text-sm transition-all"
+              className="w-full sm:w-auto text-center px-5 py-3 rounded-lg bg-brand-surface hover:bg-brand-royal text-white border border-brand-muted font-semibold text-sm transition-all"
             >
               Airbnb Takeovers
             </Link>

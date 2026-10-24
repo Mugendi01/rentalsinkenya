@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, SlidersHorizontal, RotateCcw, Sparkles } from 'lucide-react';
+import { Search, SlidersHorizontal, RotateCcw, Sparkles, ChevronDown } from 'lucide-react';
 
 interface PropertyFiltersProps {
   locations?: { name: string; slug: string }[];
@@ -17,6 +17,7 @@ export default function PropertyFilters({
 }: PropertyFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Current values from URL
   const selectedLocation = searchParams.get('location') || '';
@@ -27,6 +28,16 @@ export default function PropertyFilters({
   const isAirbnbReady = searchParams.get('isAirbnbReady') === 'true';
   const isFurnished = searchParams.get('isFurnished') === 'true';
   const selectedSort = searchParams.get('sortBy') || 'newest';
+
+  const activeFilterCount = [
+    Boolean(selectedLocation),
+    Boolean(selectedType),
+    Boolean(selectedBedrooms),
+    Boolean(selectedMinPrice),
+    Boolean(selectedMaxPrice),
+    isAirbnbReady,
+    isFurnished,
+  ].filter(Boolean).length;
 
   const updateParam = (key: string, value: string | boolean | null) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -48,11 +59,40 @@ export default function PropertyFilters({
   const propertyTypes = ['Apartment', 'Studio', 'Villa', 'Penthouse', 'Townhouse'];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+    <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-sm space-y-4 lg:space-y-6">
+      {/* Mobile Toggle Bar */}
+      <div className="lg:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-900 font-bold text-xs transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal className="w-4 h-4 text-sky-600" />
+            <span>Filter & Sort Properties</span>
+            {activeFilterCount > 0 && (
+              <span className="w-5 h-5 rounded-full bg-sky-500 text-slate-950 text-[10px] font-black flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-slate-500">
+            <span className="text-[11px] font-medium">{mobileOpen ? 'Hide' : 'Show'}</span>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileOpen ? 'rotate-180' : ''}`} />
+          </div>
+        </button>
+      </div>
+
+      {/* Desktop Header */}
+      <div className="hidden lg:flex items-center justify-between pb-4 border-b border-slate-100">
         <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
           <SlidersHorizontal className="w-4 h-4 text-sky-600" />
           <span>Filter Properties</span>
+          {activeFilterCount > 0 && (
+            <span className="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[10px] font-bold">
+              {activeFilterCount} active
+            </span>
+          )}
         </div>
         <button
           type="button"
@@ -63,6 +103,9 @@ export default function PropertyFilters({
           <span>Reset</span>
         </button>
       </div>
+
+      {/* Collapsible Content on Mobile, Always Visible on Desktop */}
+      <div className={`${mobileOpen ? 'block' : 'hidden lg:block'} space-y-5 pt-2 lg:pt-0`}>
 
       {/* Location */}
       <div>
@@ -221,6 +264,7 @@ export default function PropertyFilters({
           Apply Filters
         </button>
       )}
+      </div>
     </div>
   );
 }

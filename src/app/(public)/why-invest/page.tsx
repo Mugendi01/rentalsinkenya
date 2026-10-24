@@ -29,10 +29,10 @@ export default function WhyInvestPage() {
             <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
             <span>Investment Thesis</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight px-2">
             Why Invest in Kenyan Airbnb & Rental Properties?
           </h1>
-          <p className="text-slate-600 text-base leading-relaxed">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed px-2">
             Kenya remains East and Central Africa’s primary financial, diplomatic, and commercial hub. Here is an objective analysis of why short-term and rental investment properties continue to attract smart local and diaspora capital.
           </p>
         </div>

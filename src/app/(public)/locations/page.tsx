@@ -46,16 +46,16 @@ export default async function LocationsPage() {
             <Compass className="w-3.5 h-3.5 text-sky-600" />
             <span>Market Intelligence</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight px-2">
             Strategic Property Investment Locations in Kenya
           </h1>
-          <p className="text-slate-600 text-sm sm:text-base">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base px-2">
             Detailed insights into Kenya’s most lucrative real estate corridors. Browse available turnkey units and understand location-specific occupancy drivers.
           </p>
         </div>
 
         {/* Locations Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {locations.map((loc) => {
             const count = locationCounts[loc.name] || 0;
             return (

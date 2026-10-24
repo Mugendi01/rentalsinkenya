@@ -29,10 +29,10 @@ export default function AboutPage() {
             <Building2 className="w-3.5 h-3.5 text-sky-400" />
             <span>Our Company Story</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight px-2">
             About Rentals Kenya
           </h1>
-          <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-slate-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
             Kenya&apos;s premier platform for discovering verified houses and apartments for rent, alongside turnkey Airbnb business takeovers and furnished setups for sale.
           </p>
         </div>

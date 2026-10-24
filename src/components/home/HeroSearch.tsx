@@ -50,7 +50,7 @@ export default function HeroSearch() {
   return (
     <div className="max-w-5xl mx-auto">
       {/* Search Mode Segmented Switch: Rental Houses & Apartments (Primary) vs Airbnb Takeovers (Secondary) */}
-      <div className="flex items-center justify-center sm:justify-start gap-2 mb-3 px-1">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center sm:justify-start gap-2 mb-3 px-1 w-full sm:w-auto">
         <button
           type="button"
           onClick={() => {
@@ -58,16 +58,16 @@ export default function HeroSearch() {
             setType('');
             setMaxPrice('');
           }}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all w-full sm:w-auto ${
             searchMode === 'rentals'
               ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/30'
               : 'bg-white/10 text-white/90 hover:bg-white/15 border border-white/15 backdrop-blur-md'
           }`}
         >
-          <Home className="w-3.5 h-3.5" />
-          <span>Houses & Apartments for Rent</span>
+          <Home className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="truncate">Houses & Apartments for Rent</span>
           <span
-            className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-black ${
+            className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-black flex-shrink-0 ${
               searchMode === 'rentals'
                 ? 'bg-slate-950 text-emerald-300'
                 : 'bg-emerald-400/20 text-emerald-300 border border-emerald-400/30'
@@ -84,16 +84,16 @@ export default function HeroSearch() {
             setType('');
             setMaxPrice('');
           }}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+          className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all w-full sm:w-auto ${
             searchMode === 'airbnb'
               ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/30'
               : 'bg-white/10 text-white/90 hover:bg-white/15 border border-white/15 backdrop-blur-md'
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Airbnb Business Takeovers</span>
+          <Sparkles className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="truncate">Airbnb Business Takeovers</span>
           <span
-            className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-semibold ${
+            className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-semibold flex-shrink-0 ${
               searchMode === 'airbnb'
                 ? 'bg-slate-950 text-amber-300'
                 : 'bg-white/10 text-slate-300 border border-white/20'
@@ -185,7 +185,7 @@ export default function HeroSearch() {
           </div>
 
           {/* Max Budget & Search Button */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <div className="flex-1 p-2 sm:p-2.5 rounded-2xl bg-slate-50 hover:bg-slate-100/80 transition-colors border border-slate-100 text-left">
               <label className="block text-[10px] uppercase font-extrabold tracking-wider text-slate-700 mb-1 flex items-center gap-1">
                 <DollarSign className="w-3 h-3 text-sky-500" />
@@ -222,15 +222,15 @@ export default function HeroSearch() {
 
             <button
               type="submit"
-              className={`h-full px-5 py-3.5 text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-105 active:scale-95 ${
+              className={`w-full sm:w-auto h-auto sm:h-full px-5 py-3 sm:py-3.5 text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02] sm:hover:scale-105 active:scale-95 ${
                 searchMode === 'rentals'
                   ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-emerald-500/25'
                   : 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/25'
               }`}
               aria-label="Submit search"
             >
-              <Search className="w-4 h-4 text-slate-950" />
-              <span className="hidden lg:inline text-xs font-black">
+              <Search className="w-4 h-4 text-slate-950 flex-shrink-0" />
+              <span className="text-xs font-black whitespace-nowrap">
                 {searchMode === 'rentals' ? 'Search Rentals' : 'Search Takeovers'}
               </span>
             </button>

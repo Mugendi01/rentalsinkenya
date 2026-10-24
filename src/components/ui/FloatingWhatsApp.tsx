@@ -18,7 +18,7 @@ export default function FloatingWhatsApp({
   const whatsappUrl = buildWhatsAppUrl(phone, defaultMessage);
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end print:hidden">
+    <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-40 flex flex-col items-end print:hidden">
       {/* Tooltip Popup */}
       {showTooltip && (
         <div className="mb-2 max-w-xs bg-slate-900 text-white text-xs p-3 rounded-xl shadow-2xl border border-slate-700 animate-in fade-in slide-in-from-bottom-2 duration-200">

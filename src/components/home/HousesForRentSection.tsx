@@ -585,10 +585,10 @@ export default function HousesForRentSection({
 
       {/* 5. QUICK ENQUIRY POPUP MODAL */}
       {enquiryModalProperty && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+          <div className="relative w-full max-w-lg max-h-[92vh] flex flex-col bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="p-5 bg-brand-navy text-white flex items-center justify-between">
+            <div className="p-4 sm:p-5 bg-brand-navy text-white flex items-center justify-between flex-shrink-0">
               <div>
                 <span className="text-[10px] uppercase font-extrabold tracking-widest text-sky-400">
                   Rental Tenancy Enquiry
@@ -617,7 +617,7 @@ export default function HousesForRentSection({
 
             {/* Modal Body */}
             {webSubmitSuccess ? (
-              <div className="p-6 text-center space-y-4">
+              <div className="p-6 text-center space-y-4 overflow-y-auto">
                 <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
@@ -636,7 +636,7 @@ export default function HousesForRentSection({
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleSubmitWebEnquiry} className="p-5 space-y-4">
+              <form onSubmit={handleSubmitWebEnquiry} className="p-4 sm:p-5 space-y-4 overflow-y-auto max-h-[calc(92vh-90px)]">
                 {webSubmitError && (
                   <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs">
                     {webSubmitError}

@@ -151,7 +151,7 @@ export default async function HomePage() {
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.12] drop-shadow-lg">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] sm:leading-[1.12] drop-shadow-lg">
             Find Verified{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-white">
               Houses & Apartments
@@ -160,28 +160,28 @@ export default async function HomePage() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-white/95 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed font-normal drop-shadow-md">
+          <p className="text-white/95 text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-normal drop-shadow-md px-2">
             Discover vetted, move-in ready rental apartments and residential homes across Nairobi, Kilimani, Westlands, Kileleshwa, and prime Kenyan neighborhoods. Plus, explore turnkey Airbnb business takeovers and furnished setups for sale.
           </p>
 
           {/* Primary & Secondary CTAs */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 pt-2 w-full max-w-md sm:max-w-none mx-auto">
             {/* Primary CTA: Browse Apartment Rentals */}
             <a
               href="#rental-listings"
-              className="px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm sm:text-base shadow-xl shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 group cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm sm:text-base shadow-xl shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 group cursor-pointer"
             >
-              <Building className="w-4 h-4 text-slate-950" />
+              <Building className="w-4 h-4 text-slate-950 flex-shrink-0" />
               <span>Browse Apartment Rentals</span>
-              <ArrowRight className="w-4 h-4 text-slate-950 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-4 h-4 text-slate-950 group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
             </a>
 
             {/* Secondary CTA: Airbnb Business Takeovers */}
             <Link
               href="/properties?isAirbnbReady=true"
-              className="px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold text-sm sm:text-base backdrop-blur-md transition-all flex items-center gap-2 group hover:border-amber-400/50 cursor-pointer shadow-lg"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold text-sm sm:text-base backdrop-blur-md transition-all flex items-center justify-center gap-2 group hover:border-amber-400/50 cursor-pointer shadow-lg"
             >
-              <Sparkles className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
+              <Sparkles className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform flex-shrink-0" />
               <span>Airbnb Business Takeovers</span>
             </Link>
 
@@ -190,10 +190,10 @@ export default async function HomePage() {
               href={advisorWhatsAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40 font-bold text-sm sm:text-base backdrop-blur-md transition-all flex items-center gap-2 shadow-lg shadow-black/40"
+              className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/40 font-bold text-sm sm:text-base backdrop-blur-md transition-all flex items-center justify-center gap-2 shadow-lg shadow-black/40"
             >
-              <MessageCircle className="w-4 h-4 text-white" />
-              <span>Chat on WhatsApp </span>
+              <MessageCircle className="w-4 h-4 text-white flex-shrink-0" />
+              <span>Chat on WhatsApp</span>
             </a>
           </div>
 

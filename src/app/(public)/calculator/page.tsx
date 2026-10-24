@@ -22,10 +22,10 @@ export default async function CalculatorPage() {
             <Calculator className="w-3.5 h-3.5 text-sky-600" />
             <span>Kenyan Real Estate Financial Modeling</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight px-2">
             Kenya Airbnb & Rental Investment Calculator
           </h1>
-          <p className="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base max-w-2xl mx-auto px-2">
             Simulate your gross yield, monthly operating expenses, management fees, and net return on investment (ROI) across various Kenyan property price tiers.
           </p>
         </div>

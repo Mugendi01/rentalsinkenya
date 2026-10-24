@@ -37,10 +37,10 @@ export default async function ContactPage() {
             <Phone className="w-3.5 h-3.5 text-sky-600" />
             <span>We’re Here to Assist</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight px-2">
             Talk to Rentals Kenya
           </h1>
-          <p className="text-slate-600 text-sm sm:text-base">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base px-2">
             Have questions about an available rental apartment or house, tenancy viewing, or Airbnb takeover setup? Reach out directly to our Nairobi team.
           </p>
         </div>

@@ -101,7 +101,7 @@ export default function BrandLogo({
         </div>
         {showSubtitle && (
           <span
-            className={`font-medium tracking-widest uppercase ${dimensions.sub} ${
+            className={`font-medium tracking-widest uppercase hidden sm:block ${dimensions.sub} ${
               isLight ? 'text-sky-200/80' : 'text-slate-500'
             }`}
           >

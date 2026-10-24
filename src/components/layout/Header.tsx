@@ -82,13 +82,13 @@ export default function Header({
   };
 
   const navLinks = [
-    { label: 'Rental Apartments', href: '/#rental-listings', icon: Home },
-    { label: 'Airbnb Takeovers', href: '/properties', icon: Building2 },
-    { label: 'Locations', href: '/locations', icon: Compass },
-    { label: 'Calculator', href: '/calculator', icon: Calculator },
-    { label: 'Why Invest', href: '/why-invest', icon: TrendingUp },
-    { label: 'About Us', href: '/about', icon: Info },
-    { label: 'Contact', href: '/contact', icon: Phone },
+    { label: 'Rental Apartments', href: '/#rental-listings', icon: Home, priority: true },
+    { label: 'Airbnb Takeovers', href: '/properties', icon: Building2, priority: true },
+    { label: 'Locations', href: '/locations', icon: Compass, priority: true },
+    { label: 'Calculator', href: '/calculator', icon: Calculator, priority: true },
+    { label: 'Why Invest', href: '/why-invest', icon: TrendingUp, priority: false },
+    { label: 'About Us', href: '/about', icon: Info, priority: false },
+    { label: 'Contact', href: '/contact', icon: Phone, priority: true },
   ];
 
   const whatsappLink = buildWhatsAppUrl(
@@ -119,7 +119,9 @@ export default function Header({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-2.5 xl:px-3 py-2 rounded-lg text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`px-2 xl:px-3 py-2 rounded-lg text-xs xl:text-sm font-medium transition-colors whitespace-nowrap ${
+                    !item.priority ? 'hidden xl:inline-block' : 'inline-block'
+                  } ${
                     isActive
                       ? 'text-sky-400 bg-brand-royal/50'
                       : 'text-slate-200 hover:text-white hover:bg-brand-royal/30'

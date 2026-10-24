@@ -147,26 +147,26 @@ export default function InvestmentCalculator({
         </div>
 
         {/* Tab Switcher */}
-        <div className="bg-white/10 p-1 rounded-2xl flex items-center self-start md:self-auto border border-white/15">
+        <div className="bg-white/10 p-1 rounded-2xl grid grid-cols-2 sm:flex sm:items-center w-full sm:w-auto border border-white/15">
           <button
             onClick={() => setActiveTab('buyer')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-2 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer text-center ${
               activeTab === 'buyer'
                 ? 'bg-sky-500 text-slate-950 shadow-md'
                 : 'text-slate-200 hover:text-white'
             }`}
           >
-            Buyer Takeover Calculator
+            Buyer Takeover
           </button>
           <button
             onClick={() => setActiveTab('seller')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3 sm:px-4 py-2 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all cursor-pointer text-center ${
               activeTab === 'seller'
                 ? 'bg-sky-500 text-slate-950 shadow-md'
                 : 'text-slate-200 hover:text-white'
             }`}
           >
-            Seller Setup Calculator
+            Seller Setup
           </button>
         </div>
       </div>

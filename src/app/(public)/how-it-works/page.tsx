@@ -55,10 +55,10 @@ export default function HowItWorksPage() {
             <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
             <span>Clear & Transparent Guidance</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight px-2">
             How Rentals Kenya Works
           </h1>
-          <p className="text-slate-600 text-base leading-relaxed">
+          <p className="text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed px-2">
             A structured, secure, and transparent acquisition roadmap designed for local investors and diaspora buyers worldwide.
           </p>
         </div>
