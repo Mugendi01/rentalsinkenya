@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCurrentAdmin } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
+import { uploadImage } from '@/lib/storage';
 import path from 'path';
 
 const ALLOWED_MIME_TYPES = [
@@ -48,13 +48,7 @@ export async function POST(request: Request) {
     const cleanExt = ext.replace(/[^a-zA-Z0-9.]/g, '').toLowerCase();
     const filename = `prop_${Date.now()}_${Math.random().toString(36).substring(2, 9)}${cleanExt}`;
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    await mkdir(uploadDir, { recursive: true });
-
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-
-    const publicUrl = `/uploads/${filename}`;
+    const publicUrl = await uploadImage(buffer, filename, file.type);
 
     return NextResponse.json({
       success: true,
