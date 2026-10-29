@@ -73,7 +73,7 @@ export async function generateMetadata({
       where: { slug: params.slug },
     });
 
-    if (!property) {
+    if (!property || property.status === 'HIDDEN') {
       return { title: 'Property Not Found | Rentals Kenya' };
     }
 
