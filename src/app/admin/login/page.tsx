@@ -9,7 +9,8 @@ import Link from 'next/link';
 export default function AdminLoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/admin';
+  const requestedRedirect = searchParams.get('redirect') || '';
+  const redirect = requestedRedirect.startsWith('/') && !requestedRedirect.startsWith('//') && !requestedRedirect.includes('\\') ? requestedRedirect : '/admin';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

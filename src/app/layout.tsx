@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 // @ts-ignore Next.js handles this global stylesheet import at build time.
 import './globals.css';
+import CookieConsentBanner from '@/components/privacy/CookieConsentBanner';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -59,6 +60,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="antialiased min-h-screen flex flex-col font-sans bg-slate-50 text-slate-900">
         {children}
+        <CookieConsentBanner />
       </body>
     </html>
   );

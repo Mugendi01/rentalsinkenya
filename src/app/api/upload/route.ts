@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import { getCurrentAdmin } from '@/lib/auth';
 import { uploadImage } from '@/lib/storage';
-import path from 'path';
 
 const ALLOWED_MIME_TYPES = [
   'image/jpeg',
@@ -11,6 +11,29 @@ const ALLOWED_MIME_TYPES = [
 ];
 
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
+
+const EXTENSIONS: Record<string, string> = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/webp': '.webp',
+  'image/avif': '.avif',
+};
+
+function matchesSignature(buffer: Buffer, mime: string): boolean {
+  const ascii = (start: number, end: number) => buffer.subarray(start, end).toString('latin1');
+  switch (mime) {
+    case 'image/jpeg':
+      return buffer.length > 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+    case 'image/png':
+      return buffer.length > 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+    case 'image/webp':
+      return buffer.length > 12 && ascii(0, 4) === 'RIFF' && ascii(8, 12) === 'WEBP';
+    case 'image/avif':
+      return buffer.length > 12 && ascii(4, 8) === 'ftyp' && ['avif', 'avis'].includes(ascii(8, 12));
+    default:
+      return false;
+  }
+}
 
 export async function POST(request: Request) {
   const session = await getCurrentAdmin();
@@ -43,10 +66,14 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Generate safe filename
-    const ext = path.extname(file.name) || '.jpg';
-    const cleanExt = ext.replace(/[^a-zA-Z0-9.]/g, '').toLowerCase();
-    const filename = `prop_${Date.now()}_${Math.random().toString(36).substring(2, 9)}${cleanExt}`;
+    if (!matchesSignature(buffer, file.type)) {
+      return NextResponse.json(
+        { error: 'File content does not match an allowed image format.' },
+        { status: 400 }
+      );
+    }
+
+    const filename = `prop_${Date.now()}_${crypto.randomUUID().slice(0, 8)}${EXTENSIONS[file.type]}`;
 
     const publicUrl = await uploadImage(buffer, filename, file.type);
 
@@ -56,9 +83,6 @@ export async function POST(request: Request) {
       filename,
     });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'File upload failed' },
-      { status: 500 }
-    );
+    return errorResponse(error, 'File upload failed', 500);
   }
 }

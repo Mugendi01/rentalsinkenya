@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
 import { formatKES, formatDateTime } from '@/lib/formatters';
 import {
   Building2,
@@ -20,6 +21,8 @@ import {
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboardPage() {
+  await requireAdmin();
+
   // Aggregate Metrics
   const [
     totalProperties,

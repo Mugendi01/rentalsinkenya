@@ -320,7 +320,8 @@ ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userI
 -- SEED INITIAL DATA (Settings, Locations, Amenities, Admin)
 -- ==========================================================
 
--- 1. Create Default Admin User (Password: Admin@Rentals2026!)
+-- 1. Create Default Admin User. This hash is for a publicly known default password:
+--    change the admin password immediately after running this script.
 INSERT INTO "User" ("id", "name", "email", "phone", "country", "preferredContact", "passwordHash", "role", "isEmailVerified", "status", "updatedAt")
 VALUES 
   ('admin_rentals_ke', 'Rentals Kenya Admin', 'admin@rentals.ke', '+254100382352', 'Kenya', 'WHATSAPP', '$2a$10$4lYr5.i6Ahxe5L0MfGB.Nef3frvHU9UKxe5169KNGRQdmhZRMP9tm', 'ADMIN', true, 'VERIFIED', NOW()),

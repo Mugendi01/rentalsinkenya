@@ -34,8 +34,8 @@ Double-click `run.bat` in the project root directory. It will automatically star
 ## 🔐 Admin Credentials
 
 - **URL:** [http://localhost:3000/admin](http://localhost:3000/admin)
-- **Email:** `admin@rentals.ke`
-- **Password:** `Admin@Rentals2026!`
+- **Email:** `admin@rentals.ke` (created by `prisma/seed.js`)
+- **Password:** set `ADMIN_SEED_PASSWORD` in your local `.env` before seeding. Never commit real credentials, and change the admin password immediately on any shared or production database.
 
 ---
 

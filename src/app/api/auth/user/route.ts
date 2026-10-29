@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentUser, hashPassword, generateVerificationCode } from '@/lib/auth';
 import { userProfileSchema } from '@/lib/validations';
@@ -130,9 +131,6 @@ export async function PATCH(request: Request) {
         : 'Profile updated successfully.',
     });
   } catch (error: any) {
-    if (error.errors && error.errors[0]) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
-    }
-    return NextResponse.json({ error: error.message || 'Failed to update profile' }, { status: 400 });
+    return errorResponse(error, 'Failed to update profile', 400);
   }
 }

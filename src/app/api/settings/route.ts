@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 import { getSiteSettings } from '@/lib/settings';
@@ -41,6 +42,6 @@ export async function PUT(request: Request) {
     const updated = await getSiteSettings();
     return NextResponse.json({ success: true, settings: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

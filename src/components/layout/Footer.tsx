@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import CookieSettingsButton from '@/components/privacy/CookieSettingsButton';
 import BrandLogo from '../ui/BrandLogo';
 import {
   Phone,
@@ -202,7 +203,7 @@ export default function Footer({ settings }: FooterProps) {
         {/* Bottom Bar */}
         <div className="mt-8 pt-6 border-t border-brand-royal/30 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} Rentals Kenya (Rentals.ke). All rights reserved.</p>
-          <div className="flex items-center space-x-6">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <Link href="/about" className="hover:text-slate-300 transition-colors">
               About Us
             </Link>
@@ -212,6 +213,10 @@ export default function Footer({ settings }: FooterProps) {
             <Link href="/terms" className="hover:text-slate-300 transition-colors">
               Terms & Conditions
             </Link>
+            <Link href="/cookies" className="hover:text-slate-300 transition-colors">
+              Cookie Policy
+            </Link>
+            <CookieSettingsButton className="hover:text-slate-300 transition-colors" />
             <Link href="/faq" className="hover:text-slate-300 transition-colors">
               FAQ
             </Link>

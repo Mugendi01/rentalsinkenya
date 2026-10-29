@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { hashPassword, generateVerificationCode, createUserSession } from '@/lib/auth';
 import { registerSchema } from '@/lib/validations';
@@ -110,9 +111,6 @@ export async function POST(request: Request) {
       }, { status: 201 });
     }
   } catch (error: any) {
-    if (error.errors && error.errors[0]) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
-    }
-    return NextResponse.json({ error: error.message || 'Registration failed' }, { status: 400 });
+    return errorResponse(error, 'Registration failed', 400);
   }
 }

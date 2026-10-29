@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 import { propertyFormSchema } from '@/lib/validations';
@@ -17,13 +18,13 @@ export async function GET(request: Request, { params }: RouteProps) {
       },
     });
 
-    if (!property) {
+    if (!property || (property.status === 'HIDDEN' && !(await getCurrentAdmin()))) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
 
     return NextResponse.json({ property });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -90,10 +91,7 @@ export async function PUT(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ success: true, property: updated });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Failed to update property' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to update property', 400);
   }
 }
 
@@ -123,7 +121,7 @@ export async function DELETE(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -159,6 +157,6 @@ export async function PATCH(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ success: true, property: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

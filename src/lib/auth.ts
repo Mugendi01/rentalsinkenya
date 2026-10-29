@@ -4,8 +4,9 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import prisma from './prisma';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'rentals_kenya_secure_fallback_secret_key_2026';
-const secretKey = new TextEncoder().encode(JWT_SECRET);
+import { redirect } from 'next/navigation';
+import { getJwtSecretKey } from './jwt-secret';
+
 
 export const USER_COOKIE_NAME = 'rentals_user_token';
 export const ADMIN_COOKIE_NAME = 'rentals_admin_token';
@@ -88,12 +89,12 @@ export async function signSessionToken(payload: SessionPayload): Promise<string>
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d')
-    .sign(secretKey);
+    .sign(getJwtSecretKey());
 }
 
 export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, secretKey);
+    const { payload } = await jwtVerify(token, getJwtSecretKey());
     return payload as unknown as SessionPayload;
   } catch (err) {
     return null;
@@ -165,6 +166,16 @@ export async function getCurrentAdmin(): Promise<SessionPayload | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * Server-component guard for admin pages: redirects to the admin login when the
+ * caller is not a verified, active admin (middleware only checks the token signature).
+ */
+export async function requireAdmin(): Promise<SessionPayload> {
+  const session = await getCurrentAdmin();
+  if (!session) redirect('/admin/login');
+  return session;
 }
 
 /**

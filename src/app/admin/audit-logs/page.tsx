@@ -1,11 +1,14 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
+import { requireAdmin } from '@/lib/auth';
 import { formatDateTime } from '@/lib/formatters';
 import { History, Shield, User, Clock } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AuditLogsPage() {
+  await requireAdmin();
+
   const logs = await prisma.auditLog.findMany({
     orderBy: { createdAt: 'desc' },
     take: 50,

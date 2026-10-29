@@ -7,7 +7,11 @@ async function main() {
   console.log('Seeding database for Rentals Kenya...');
 
   // 1. Create Default Admin User
-  const passwordHash = await bcrypt.hash('Admin@Rentals2026!', 10);
+  const seedPassword = process.env.ADMIN_SEED_PASSWORD;
+  if (!seedPassword || seedPassword.length < 12) {
+    throw new Error('Set ADMIN_SEED_PASSWORD (at least 12 characters) before running the seed.');
+  }
+  const passwordHash = await bcrypt.hash(seedPassword, 10);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@rentals.ke' },
     update: {

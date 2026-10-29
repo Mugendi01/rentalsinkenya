@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { verifyPassword, createUserSession } from '@/lib/auth';
 import { verifyEmailSchema } from '@/lib/validations';
@@ -132,9 +133,6 @@ export async function POST(request: Request) {
       },
     });
   } catch (error: any) {
-    if (error.errors && error.errors[0]) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
-    }
-    return NextResponse.json({ error: error.message || 'Verification failed' }, { status: 400 });
+    return errorResponse(error, 'Verification failed', 400);
   }
 }

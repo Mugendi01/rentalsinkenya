@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { hashPassword, verifyPassword } from '@/lib/auth';
 import { resetPasswordSchema } from '@/lib/validations';
@@ -84,12 +85,6 @@ export async function POST(request: Request) {
       message: 'Your password has been successfully reset. Please log in with your new password.',
     });
   } catch (error: any) {
-    if (error.errors && error.errors[0]) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
-    }
-    return NextResponse.json(
-      { error: error.message || 'Failed to reset password' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to reset password', 400);
   }
 }

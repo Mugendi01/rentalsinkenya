@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 import { viewingRequestSchema } from '@/lib/validations';
@@ -8,16 +9,21 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validated = viewingRequestSchema.parse(body);
 
+    const property = await prisma.property.findUnique({
+      where: { id: validated.propertyId },
+      select: { status: true },
+    });
+    if (!property || property.status === 'HIDDEN') {
+      return NextResponse.json({ error: 'Property not found' }, { status: 404 });
+    }
+
     const viewing = await prisma.viewingRequest.create({
       data: validated,
     });
 
-    return NextResponse.json({ success: true, viewing }, { status: 201 });
+    return NextResponse.json({ success: true, viewing: { id: viewing.id } }, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Failed to submit viewing request' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to submit viewing request', 400);
   }
 }
 
@@ -53,7 +59,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ viewings });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -72,6 +78,12 @@ export async function PATCH(request: Request) {
     }
 
     const data: any = {};
+    if (status !== undefined && !['PENDING', 'CONFIRMED', 'RESCHEDULED', 'COMPLETED', 'CANCELLED'].includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+    if (internalNotes !== undefined && internalNotes !== null && (typeof internalNotes !== 'string' || internalNotes.length > 10000)) {
+      return NextResponse.json({ error: 'Invalid internal notes' }, { status: 400 });
+    }
     if (status !== undefined) data.status = status;
     if (internalNotes !== undefined) data.internalNotes = internalNotes;
 
@@ -92,6 +104,6 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({ success: true, viewing: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
