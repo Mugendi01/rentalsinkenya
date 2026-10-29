@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 import { propertyFormSchema } from '@/lib/validations';
@@ -9,9 +10,13 @@ export async function GET(request: Request) {
     const status = searchParams.get('status');
     const featured = searchParams.get('featured');
 
+    const isAdmin = !!(await getCurrentAdmin());
     const where: any = {};
-    if (status && status !== 'ALL') {
+    if (status && status !== 'ALL' && (isAdmin || status !== 'HIDDEN')) {
       where.status = status;
+    }
+    if (!isAdmin && where.status === undefined) {
+      where.status = { not: 'HIDDEN' };
     }
     if (featured === 'true') {
       where.isFeatured = true;
@@ -28,7 +33,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ properties });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -102,9 +107,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, property }, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Failed to create property' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to create property', 400);
   }
 }

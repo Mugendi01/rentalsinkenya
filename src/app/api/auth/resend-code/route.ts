@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { hashPassword, generateVerificationCode } from '@/lib/auth';
 import { resendCodeSchema } from '@/lib/validations';
@@ -52,6 +53,6 @@ export async function POST(request: Request) {
       message: 'A new 6-digit verification code has been sent to your email address.',
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to resend code' }, { status: 400 });
+    return errorResponse(error, 'Failed to resend code', 400);
   }
 }

@@ -24,7 +24,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get('redirect') || '';
+  const requestedRedirect = searchParams.get('redirect') || '';
+  const redirectUrl = requestedRedirect.startsWith('/') && !requestedRedirect.startsWith('//') && !requestedRedirect.includes('\\') ? requestedRedirect : '';
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

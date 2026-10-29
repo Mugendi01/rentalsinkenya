@@ -15,6 +15,15 @@ const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || 'Rentals Kenya';
 const EMAIL_FROM_ADDRESS = process.env.EMAIL_FROM || 'support@rentals.ke';
 const EMAIL_API_KEY = process.env.EMAIL_API_KEY || process.env.RESEND_API_KEY || '';
 
+function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export async function sendEmail({ to, subject, html, text }: SendEmailParams): Promise<{ success: boolean; messageId?: string; error?: string }> {
   const from = `${EMAIL_FROM_NAME} <${EMAIL_FROM_ADDRESS}>`;
 
@@ -48,7 +57,12 @@ export async function sendEmail({ to, subject, html, text }: SendEmailParams): P
     }
   }
 
-  // Safe local development simulation & console audit
+  if (process.env.NODE_ENV === 'production') {
+    console.error('[EMAIL] No email provider configured; message to recipient was not sent.');
+    return { success: false, error: 'Email provider not configured' };
+  }
+
+  // Local development simulation (never used in production, as bodies contain codes and reset links)
   console.log('\n==================================================');
   console.log(`[RENTALS KENYA EMAIL DISPATCH]`);
   console.log(`From:    ${from}`);
@@ -74,7 +88,7 @@ export async function sendVerificationEmail(email: string, name: string, code: s
         <p style="color: #64748b; font-size: 13px; margin: 4px 0 0 0;">Kenya's Marketplace for Ready-to-Run Airbnb Setups</p>
       </div>
 
-      <p style="color: #334155; font-size: 15px; line-height: 1.5;">Hello ${name || 'there'},</p>
+      <p style="color: #334155; font-size: 15px; line-height: 1.5;">Hello ${escapeHtml(name || 'there')},</p>
       <p style="color: #334155; font-size: 15px; line-height: 1.5;">Thank you for registering on Rentals Kenya. To complete your account registration and start enquiring on verified Airbnb setups, please enter the following 6-digit verification code:</p>
       
       <div style="margin: 28px 0; text-align: center;">
@@ -107,7 +121,7 @@ export async function sendAccountVerifiedEmail(email: string, name: string) {
         <h2 style="color: #0f172a; margin: 0;">Rentals Kenya</h2>
         <p style="color: #64748b; font-size: 13px; margin: 4px 0 0 0;">Account Verified</p>
       </div>
-      <p style="color: #334155; font-size: 15px;">Hello ${name || 'there'},</p>
+      <p style="color: #334155; font-size: 15px;">Hello ${escapeHtml(name || 'there')},</p>
       <p style="color: #334155; font-size: 15px; line-height: 1.5;">Your Rentals Kenya account has been verified successfully. You can now:</p>
       <ul style="color: #334155; font-size: 14px; line-height: 1.8;">
         <li>Submit direct enquiries on ready-to-run Airbnb setups</li>
@@ -134,15 +148,15 @@ export async function sendPasswordResetEmail(email: string, name: string, resetL
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
       <h2 style="color: #0f172a; margin-top: 0;">Password Reset Request</h2>
-      <p style="color: #334155; font-size: 15px;">Hello ${name || 'there'},</p>
+      <p style="color: #334155; font-size: 15px;">Hello ${escapeHtml(name || 'there')},</p>
       <p style="color: #334155; font-size: 15px; line-height: 1.5;">We received a request to reset the password for your Rentals Kenya account. Click the button below to choose a new password:</p>
       
       <div style="margin: 24px 0; text-align: center;">
-        <a href="${resetLink}" style="display: inline-block; background-color: #0284c7; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px;">Reset Password</a>
+        <a href="${escapeHtml(resetLink)}" style="display: inline-block; background-color: #0284c7; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px;">Reset Password</a>
       </div>
 
       <p style="color: #64748b; font-size: 13px;">This reset link expires in <strong>30 minutes</strong> and can only be used once.</p>
-      <p style="color: #64748b; font-size: 12px;">Or paste this URL into your browser:<br/><a href="${resetLink}" style="color: #0284c7;">${resetLink}</a></p>
+      <p style="color: #64748b; font-size: 12px;">Or paste this URL into your browser:<br/><a href="${escapeHtml(resetLink)}" style="color: #0284c7;">${escapeHtml(resetLink)}</a></p>
       
       <div style="margin-top: 30px; padding-top: 16px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; text-align: center;">
         If you didn't request a password reset, you can safely ignore this email.
@@ -161,8 +175,8 @@ export async function sendBuyerEnquiryConfirmation(email: string, name: string, 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
       <h2 style="color: #0f172a; margin-top: 0;">Enquiry Received</h2>
-      <p style="color: #334155; font-size: 15px;">Hello ${name},</p>
-      <p style="color: #334155; font-size: 15px; line-height: 1.5;">Thank you for enquiring about <strong>${propertyTitle || 'an Airbnb Setup'}</strong> on Rentals Kenya.</p>
+      <p style="color: #334155; font-size: 15px;">Hello ${escapeHtml(name)},</p>
+      <p style="color: #334155; font-size: 15px; line-height: 1.5;">Thank you for enquiring about <strong>${escapeHtml(propertyTitle || 'an Airbnb Setup')}</strong> on Rentals Kenya.</p>
       <p style="color: #334155; font-size: 15px; line-height: 1.5;">Our investment advisory team has received your enquiry. We will review the asset inventory and tenancy details, and contact you via your preferred communication channel shortly.</p>
       
       <div style="margin: 20px 0; padding: 14px; background-color: #f8fafc; border-left: 4px solid #0284c7; border-radius: 6px;">
@@ -204,16 +218,16 @@ export async function sendAdminEnquiryNotification({
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
       <h2 style="color: #0f172a; margin-top: 0; border-bottom: 2px solid #0284c7; padding-bottom: 8px;">New Airbnb Enquiry</h2>
       <table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px;">
-        <tr><td style="padding: 8px 0; color: #64748b; width: 140px;"><strong>Buyer Name:</strong></td><td style="color: #0f172a; font-weight: bold;">${buyerName}</td></tr>
-        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Property:</strong></td><td style="color: #0f172a;">${propertyTitle || 'General Enquiry'}</td></tr>
-        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Phone:</strong></td><td style="color: #0f172a;">${buyerPhone}</td></tr>
-        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Email:</strong></td><td style="color: #0f172a;"><a href="mailto:${buyerEmail}">${buyerEmail}</a></td></tr>
-        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Date:</strong></td><td style="color: #0f172a;">${date}</td></tr>
+        <tr><td style="padding: 8px 0; color: #64748b; width: 140px;"><strong>Buyer Name:</strong></td><td style="color: #0f172a; font-weight: bold;">${escapeHtml(buyerName)}</td></tr>
+        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Property:</strong></td><td style="color: #0f172a;">${escapeHtml(propertyTitle || 'General Enquiry')}</td></tr>
+        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Phone:</strong></td><td style="color: #0f172a;">${escapeHtml(buyerPhone)}</td></tr>
+        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Email:</strong></td><td style="color: #0f172a;"><a href="mailto:${escapeHtml(buyerEmail)}">${escapeHtml(buyerEmail)}</a></td></tr>
+        <tr><td style="padding: 8px 0; color: #64748b;"><strong>Date:</strong></td><td style="color: #0f172a;">${escapeHtml(date)}</td></tr>
       </table>
 
       <div style="margin-top: 16px; padding: 14px; background-color: #f1f5f9; border-radius: 8px;">
         <strong style="color: #334155; display: block; margin-bottom: 6px;">Buyer Message:</strong>
-        <p style="margin: 0; color: #1e293b; font-size: 14px; line-height: 1.5;">${message}</p>
+        <p style="margin: 0; color: #1e293b; font-size: 14px; line-height: 1.5;">${escapeHtml(message)}</p>
       </div>
 
       <div style="margin-top: 24px;">

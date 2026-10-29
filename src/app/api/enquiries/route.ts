@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentUser, getCurrentAdmin } from '@/lib/auth';
 import { enquirySchema } from '@/lib/validations';
@@ -90,13 +91,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, enquiry }, { status: 201 });
   } catch (error: any) {
-    if (error.errors && error.errors[0]) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
-    }
-    return NextResponse.json(
-      { error: error.message || 'Failed to submit enquiry' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to submit enquiry', 400);
   }
 }
 
@@ -184,7 +179,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ enquiries });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -203,6 +198,12 @@ export async function PATCH(request: Request) {
     }
 
     const data: any = {};
+    if (status !== undefined && !['NEW', 'CONTACTED', 'VIEWING_REQUESTED', 'VIEWING_SCHEDULED', 'NEGOTIATION', 'CONVERTED', 'CLOSED'].includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+    if (internalNotes !== undefined && internalNotes !== null && (typeof internalNotes !== 'string' || internalNotes.length > 10000)) {
+      return NextResponse.json({ error: 'Invalid internal notes' }, { status: 400 });
+    }
     if (status !== undefined) data.status = status;
     if (internalNotes !== undefined) data.internalNotes = internalNotes;
 
@@ -223,6 +224,6 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({ success: true, enquiry: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

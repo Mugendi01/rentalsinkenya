@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 
@@ -60,7 +61,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ users });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -120,6 +121,6 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 import { rentalFormSchema } from '@/lib/validations';
@@ -16,8 +17,12 @@ export async function GET(request: Request) {
       ],
     };
 
-    if (status && status !== 'ALL') {
+    const isAdmin = !!(await getCurrentAdmin());
+    if (status && status !== 'ALL' && (isAdmin || status !== 'HIDDEN')) {
       where.status = status;
+    }
+    if (!isAdmin && where.status === undefined) {
+      where.status = { not: 'HIDDEN' };
     }
 
     if (search && search.trim()) {
@@ -44,7 +49,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ rentals });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -152,9 +157,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, rental: property });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Failed to create rental listing' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to create rental listing', 400);
   }
 }

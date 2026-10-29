@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 
@@ -75,6 +76,6 @@ export async function POST(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ success: true, property: copy });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

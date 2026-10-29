@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentAdmin } from '@/lib/auth';
 import { rentalFormSchema } from '@/lib/validations';
@@ -17,7 +18,7 @@ export async function GET(request: Request, { params }: RouteProps) {
       },
     });
 
-    if (!rental) {
+    if (!rental || (rental.status === 'HIDDEN' && !(await getCurrentAdmin()))) {
       return NextResponse.json({ error: 'Rental listing not found' }, { status: 404 });
     }
 
@@ -33,7 +34,7 @@ export async function GET(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ rental: { ...rental, contactInfo } });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -136,10 +137,7 @@ export async function PUT(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ success: true, rental: updated });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Failed to update rental listing' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to update rental listing', 400);
   }
 }
 
@@ -174,7 +172,7 @@ export async function PATCH(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ success: true, rental: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -204,6 +202,6 @@ export async function DELETE(request: Request, { params }: RouteProps) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

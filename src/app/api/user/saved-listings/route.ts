@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -37,7 +38,7 @@ export async function GET() {
 
     return NextResponse.json({ saved });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }
 
@@ -81,6 +82,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ saved: true, message: 'Saved to your dashboard' });
     }
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

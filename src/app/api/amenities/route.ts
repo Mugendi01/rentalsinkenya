@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,6 @@ export async function GET() {
     });
     return NextResponse.json({ amenities });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return errorResponse(error, 'Request failed', 500);
   }
 }

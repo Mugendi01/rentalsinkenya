@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { errorResponse } from '@/lib/http';
 import prisma from '@/lib/prisma';
 import { generateResetToken, hashPassword } from '@/lib/auth';
 import { forgotPasswordSchema } from '@/lib/validations';
@@ -45,9 +46,6 @@ export async function POST(request: Request) {
 
     return genericSuccessResponse;
   } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Failed to process request' },
-      { status: 400 }
-    );
+    return errorResponse(error, 'Failed to process request', 400);
   }
 }
